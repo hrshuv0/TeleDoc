@@ -27,7 +27,7 @@ public class AuthController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        if (!ModelState.IsValid) return BadRequest();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var result = await _authRepo.Register(model);
 
@@ -39,4 +39,20 @@ public class AuthController : Controller
             _ => BadRequest()
         };
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginViewModel model)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var result = await _authRepo.Login(model);
+
+        return result.Status switch
+        {
+            ResponseStatus.Succeeded => Ok(new {result.Token, result.User}),
+            ResponseStatus.NotFound => throw new NotFoundException("user with " + model.Email),
+            _ => Unauthorized()
+        };
+    }
+
 }

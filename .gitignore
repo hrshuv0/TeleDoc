@@ -41,6 +41,7 @@ project.fragment.lock.json
 artifacts/
 wwwroot
 **/appsettings.json
+**appsettings.json
 
 # SQL Server files
 *.mdf
