@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using TeleDoc.API.Area.Patients.Models;
 using TeleDoc.API.Context;
 using TeleDoc.API.Models;
 using TeleDoc.API.Services;
@@ -24,6 +25,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IAuthRepository<ApplicationUser>, AuthRepository<ApplicationUser>>();
+builder.Services.AddScoped<IPatientRepository, PatientRepository>();
+
+
 
 builder.Services.AddMvc().AddNewtonsoftJson(opt =>
 {
