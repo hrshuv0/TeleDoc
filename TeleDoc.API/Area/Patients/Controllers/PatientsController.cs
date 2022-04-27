@@ -48,4 +48,26 @@ public class PatientsController : Controller
         };
 
     }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginViewModel model)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var result = await _authRepo.Login(model);
+        
+        var data = _mapper.Map<Patient>(result.Data);
+        var dataToReturn = _mapper.Map<PatientDetailsDto>(data);
+
+        return result.Status switch
+        {
+            ResponseStatus.Succeeded => Ok(new {result.Token, dataToReturn}),
+            ResponseStatus.NotFound => throw new NotFoundException("user with " + model.Email),
+            _ => Unauthorized()
+        };
+    }
+    
+    
+    
+    
 }
