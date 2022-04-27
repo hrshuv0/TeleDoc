@@ -25,12 +25,6 @@ public class PatientsController : Controller
         _patientRepo = patientRepo;
     }
 
-    // GET
-    // public string Index()
-    // {
-    //     return "patient is working";
-    // }
-
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
