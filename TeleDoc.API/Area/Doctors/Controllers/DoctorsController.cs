@@ -88,10 +88,19 @@ public class DoctorsController : Controller
 
         return Ok(result);
     }
-    
-    
-    
-    
-    
-    
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateDoctor([FromQuery] string email, Doctor doctor)
+    {
+        if (email != doctor.Email) return BadRequest();
+        
+        var result = await _doctorRepo.UpdateDoctorByEmail(doctor);
+
+        return Ok(result);
+    }
+
+
+
+
+
 }

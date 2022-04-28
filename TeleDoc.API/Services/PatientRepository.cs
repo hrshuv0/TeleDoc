@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TeleDoc.API.Area.Patients.Models;
+using TeleDoc.API.Context;
 using TeleDoc.API.Dtos.PatientsDto;
 using TeleDoc.DAL.Entities;
 
@@ -11,11 +12,13 @@ public class PatientRepository : IPatientRepository
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
+    private readonly ApplicationDbContext _dbContext;
 
-    public PatientRepository(UserManager<ApplicationUser> userManager, IMapper mapper)
+    public PatientRepository(UserManager<ApplicationUser> userManager, IMapper mapper, ApplicationDbContext dbContext)
     {
         _userManager = userManager;
         _mapper = mapper;
+        _dbContext = dbContext;
     }
 
     public async Task<List<Patient>?> GetPatientListAsync()
@@ -38,8 +41,26 @@ public class PatientRepository : IPatientRepository
         return data;
     }
 
-    public Task<Patient> UpdatePatientByEmail(string email)
+    public async Task<Patient> UpdatePatientByEmail(Patient patient)
     {
-        throw new NotImplementedException();
+        // var doc = _dbContext.Users.FirstOrDefault(d => d.Email == doctor.Email);
+        var pat = _dbContext.Users.FirstOrDefault(p => p.Email == patient.Email);
+        // doc = _mapper.Map<Doctor>(doc);
+        // doc = doctor;
+
+        if (pat is not null)
+        {
+            pat.Name = patient.Name;
+            pat.Gender = patient.Gender;
+            pat.Address = patient.Address;
+            pat.Disease = patient.Disease;
+            pat.PhoneNumber = patient.PhoneNumber;
+            pat.DateOfBirth = patient.DateOfBirth;
+
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+        return patient;
     }
 }

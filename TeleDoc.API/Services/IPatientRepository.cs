@@ -6,6 +6,6 @@ public interface IPatientRepository
 {
     Task<List<Patient>?> GetPatientListAsync();
     Task<Patient> GetPatientByEmail(string email);
-    Task<Patient> UpdatePatientByEmail(string email);
+    Task<Patient> UpdatePatientByEmail(Patient patient);
 
 }

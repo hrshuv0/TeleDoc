@@ -79,6 +79,16 @@ public class PatientsController : Controller
 
         return Ok(result);
     }
+    
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdatePatient([FromQuery] string email, Patient patient)
+    {
+        if (email != patient.Email) return BadRequest();
+        
+        var result = await _patientRepo.UpdatePatientByEmail(patient);
+    
+        return Ok(result);
+    }
 
 
 

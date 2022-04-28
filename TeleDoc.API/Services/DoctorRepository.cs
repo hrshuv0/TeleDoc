@@ -56,8 +56,27 @@ public class DoctorRepository : IDoctorRepository
         throw new NotImplementedException();
     }
 
-    public Task<Doctor> UpdateDoctorByEmail(Doctor doctor)
+    public async Task<Doctor> UpdateDoctorByEmail(Doctor doctor)
     {
-        throw new NotImplementedException();
+        var doc = _dbContext.Users.FirstOrDefault(d => d.Email == doctor.Email);
+        // doc = _mapper.Map<Doctor>(doc);
+        // doc = doctor;
+
+        if (doc is not null)
+        {
+            // _dbContext.Update(doc);
+            doc.Name = doctor.Name;
+            doc.Speciality = doctor.Speciality;
+            doc.Gender = doctor.Gender;
+            doc.Address = doctor.Address;
+            doc.College = doctor.College;
+            doc.DateOfBirth = doctor.DateOfBirth;
+
+            // doc = doctor;
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+        return doctor;
     }
 }
