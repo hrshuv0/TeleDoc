@@ -1,4 +1,6 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeleDoc.API.Area.Doctors.Models;
 using TeleDoc.API.Dtos.DoctorsDto;
@@ -10,6 +12,7 @@ using TeleDoc.DAL.Exceptions;
 
 namespace TeleDoc.API.Area.Doctors.Controllers;
 
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 [Route("api/[controller]")]
 public class DoctorsController : Controller
@@ -25,6 +28,7 @@ public class DoctorsController : Controller
         _doctorRepo = doctorRepo;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
@@ -45,6 +49,7 @@ public class DoctorsController : Controller
 
     }
     
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
