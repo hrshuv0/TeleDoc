@@ -6,13 +6,14 @@ using TeleDoc.API.Area.Doctors.Models;
 using TeleDoc.API.Dtos.DoctorsDto;
 using TeleDoc.API.Models.Account;
 using TeleDoc.API.Services;
+using TeleDoc.API.Static;
 using TeleDoc.DAL.Entities;
 using TeleDoc.DAL.Enums;
 using TeleDoc.DAL.Exceptions;
 
 namespace TeleDoc.API.Area.Doctors.Controllers;
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = CustomeRoles.DoctorAdmin)]
 [ApiController]
 [Route("api/[controller]")]
 public class DoctorsController : Controller
@@ -34,7 +35,7 @@ public class DoctorsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var result = await _authRepo.Register(model);
+        var result = await _authRepo.Register(model, UserRoles.Doctor);
 
         var data = _mapper.Map<Doctor>(result.Data);
         var dataToReturn = _mapper.Map<DoctorDetailsDto>(data);
@@ -55,7 +56,7 @@ public class DoctorsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var result = await _authRepo.Login(model);
+        var result = await _authRepo.Login(model, UserRoles.Doctor);
         
         var data = _mapper.Map<Doctor>(result.Data);
         var dataToReturn = _mapper.Map<DoctorDetailsDto>(data);
@@ -68,6 +69,7 @@ public class DoctorsController : Controller
         };
     }
     
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> GetDoctorListAsync()
     {
@@ -77,7 +79,7 @@ public class DoctorsController : Controller
     }
     
 
-
+    [AllowAnonymous]
     [HttpGet("de")]
     public async Task<IActionResult> GetDoctorByEmail([FromQuery] string email)
     {
@@ -86,6 +88,7 @@ public class DoctorsController : Controller
         return Ok(result);
     }
     
+    [AllowAnonymous]
     [HttpGet("dn")]
     public async Task<IActionResult> GetDoctorByName([FromQuery] string name)
     {

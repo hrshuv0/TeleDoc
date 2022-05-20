@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TeleDoc.API.Context;
+using TeleDoc.API.Data;
 using TeleDoc.API.Services;
 using TeleDoc.DAL.Entities;
 
@@ -87,5 +88,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await AppDbInitializer.SeedUsersAndRoleAsync(app);
 
 app.Run();

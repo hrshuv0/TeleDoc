@@ -6,13 +6,14 @@ using TeleDoc.API.Area.Patients.Models;
 using TeleDoc.API.Dtos.PatientsDto;
 using TeleDoc.API.Models.Account;
 using TeleDoc.API.Services;
+using TeleDoc.API.Static;
 using TeleDoc.DAL.Entities;
 using TeleDoc.DAL.Enums;
 using TeleDoc.DAL.Exceptions;
 
 namespace TeleDoc.API.Area.Patients.Controllers;
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = CustomeRoles.PatientAdmin)]
 [ApiController]
 [Route("api/[controller]")]
 public class PatientsController : Controller
@@ -34,7 +35,7 @@ public class PatientsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var result = await _authRepo.Register(model);
+        var result = await _authRepo.Register(model, UserRoles.Patient);
 
         var data = _mapper.Map<Patient>(result.Data);
         var dataToReturn = _mapper.Map<PatientDetailsDto>(data);
@@ -55,7 +56,7 @@ public class PatientsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var result = await _authRepo.Login(model);
+        var result = await _authRepo.Login(model, UserRoles.Patient);
         
         var data = _mapper.Map<Patient>(result.Data);
         var dataToReturn = _mapper.Map<PatientDetailsDto>(data);
@@ -72,6 +73,7 @@ public class PatientsController : Controller
     [HttpGet]
     public async Task<IActionResult> GetPatientListAsync()
     {
+        Console.WriteLine(CustomeRoles.PatientAdmin);
         var result = await _patientRepo.GetPatientListAsync();
 
         return Ok(result);
