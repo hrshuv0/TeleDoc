@@ -97,6 +97,30 @@ public class PatientsController : Controller
         return Ok(result);
     }
 
+    [AllowAnonymous]
+    [HttpPost("resetPassword")]
+    public async Task<IActionResult> ForGotPassword([FromQuery] string email)
+    {
+        var model = new ForgotPasswordViewModel()
+        {
+            Email = email
+        };
+        var result = await _authRepo.ForgotPassword(model);
+
+        if (result.Status == ResponseStatus.NotFound)
+        {
+            throw new NotFoundException(email);
+        }
+        else if (result.Status == ResponseStatus.Succeeded)
+        {
+            var url = Url.RouteUrl("url", new { code = result.Data }, protocol: HttpContext.Request.Scheme);
+
+        }
+
+        return Ok();
+    }
+
+
 
 
 }

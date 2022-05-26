@@ -1,12 +1,14 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TeleDoc.API.Context;
 using TeleDoc.API.Data;
 using TeleDoc.API.Services;
+using TeleDoc.API.Services.EmailServices;
 using TeleDoc.DAL.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +47,8 @@ builder.Services.AddCors();
 builder.Services.AddScoped<IAuthRepository<ApplicationUser>, AuthRepository<ApplicationUser>>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
+
+builder.Services.AddTransient<IEmailSender, MailJetEmailSender>();
 
 
 

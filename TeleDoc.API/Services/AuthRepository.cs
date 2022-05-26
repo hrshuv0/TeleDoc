@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using TeleDoc.API.Models.Account;
 using TeleDoc.DAL.Entities;
@@ -15,12 +16,14 @@ public class AuthRepository<T> : IAuthRepository<T> where T : ApplicationUser, n
     private readonly UserManager<T> _userManager;
     private readonly SignInManager<T> _signInManager;
     private readonly IConfiguration _config;
+    private readonly IEmailSender _emailSender;
 
-    public AuthRepository(UserManager<T> userManager, SignInManager<T> signInManager, IConfiguration config)
+    public AuthRepository(UserManager<T> userManager, SignInManager<T> signInManager, IConfiguration config, IEmailSender emailSender)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _config = config;
+        _emailSender = emailSender;
     }
 
     public async Task<CustomResponse> Register(RegisterViewModel model, string role)
@@ -100,6 +103,8 @@ public class AuthRepository<T> : IAuthRepository<T> where T : ApplicationUser, n
                 response.Status = ResponseStatus.Succeeded;
                 response.Token = tokenHandler.WriteToken(token);
                 response.Data = user;
+
+                await _emailSender.SendEmailAsync(user.Email, "new login", "<p>new login detected</p>");
             }
             else
             {
@@ -111,5 +116,30 @@ public class AuthRepository<T> : IAuthRepository<T> where T : ApplicationUser, n
 
         return response;
 
+    }
+
+    public async Task<CustomResponse> ForgotPassword(ForgotPasswordViewModel model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+
+        var response = new CustomResponse();
+        if (user is null)
+        {
+            response.Status = ResponseStatus.NotFound;
+            response.Data = null;
+        }
+        
+        var code = await _userManager.GeneratePasswordResetTokenAsync(user!);
+        // var callbackUrl = $"{_config["applicationUrl"]}/resetPassword?email={model.Email}&code={code}";
+        //
+        // await _emailSender.SendEmailAsync(model.Email, "Reset Password - TeleDoc",
+        //     "reset your password by clicking " + callbackUrl);
+        
+
+        response.Status = ResponseStatus.Succeeded;
+        response.Data = code;
+        
+        
+        return response;
     }
 }
