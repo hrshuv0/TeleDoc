@@ -32,7 +32,8 @@ public static class AppDbInitializer
                 Name = "Admin User",
                 UserName = adminEmail,
                 Email = adminEmail,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                Role = UserRoles.Admin
             };
             await userManager.CreateAsync(newAdmin, "pass123");
             await userManager.AddToRoleAsync(newAdmin, UserRoles.Admin);
@@ -48,7 +49,8 @@ public static class AppDbInitializer
                 UserName = doctortEmail,
                 Email = doctortEmail,
                 Gender = UserGender.Female,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                Role = UserRoles.Doctor
             };
             await userManager.CreateAsync(newDoctor, "pass123");
             await userManager.AddToRoleAsync(newDoctor, UserRoles.Patient);
@@ -65,7 +67,8 @@ public static class AppDbInitializer
                 UserName = patientEmail,
                 Email = patientEmail,
                 Gender = UserGender.Male,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                Role = UserRoles.Patient
             };
             await userManager.CreateAsync(newPatient, "pass123");
             await userManager.AddToRoleAsync(newPatient, UserRoles.Patient);

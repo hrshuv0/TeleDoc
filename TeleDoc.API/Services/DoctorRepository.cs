@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using TeleDoc.API.Area.Doctors.Models;
 using TeleDoc.API.Context;
 using TeleDoc.API.Dtos.DoctorsDto;
+using TeleDoc.API.Static;
 using TeleDoc.DAL.Entities;
 
 namespace TeleDoc.API.Services;
@@ -11,44 +12,50 @@ namespace TeleDoc.API.Services;
 public class DoctorRepository : IDoctorRepository
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
 
-    public DoctorRepository(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, IMapper mapper)
+    public DoctorRepository(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, IMapper mapper, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _dbContext = dbContext;
         _mapper = mapper;
+        _roleManager = roleManager;
     }
 
-    public async Task<List<Doctor>?> GetDoctorListAsync()
+    public async Task<List<DoctorDetailsDto>?> GetDoctorListAsync()
     {
-        var result = await _userManager.Users.ToListAsync();
-        
+        var result = await _userManager.Users
+            .Where(r => r.Role == UserRoles.Doctor)
+            .ToListAsync();
         var data = _mapper.Map<List<Doctor>>(result);
+        var dataToReturn = _mapper.Map<List<DoctorDetailsDto>>(data);
 
-        return data;
+        return dataToReturn;
     }
 
-    public async Task<Doctor> GetDoctorByEmail(string email)
+    public async Task<DoctorDetailsDto> GetDoctorByEmail(string email)
     {
         var result = await _userManager.FindByEmailAsync(email);
         
         var data = _mapper.Map<Doctor>(result);
         var dataToReturn = _mapper.Map<DoctorDetailsDto>(data);
 
-        return data;
+        return dataToReturn;
     }
 
-    public async Task<Doctor> GetDoctorByName(string name)
+    public async Task<List<DoctorDetailsDto>?> GetDoctorByName(string name)
     {
         // var result = await _userManager.FindByNameAsync(name);
-        var result = await _dbContext.Users.FirstOrDefaultAsync(d => d.Name != null && d.Name.Contains(name));
-        var data = _mapper.Map<Doctor>(result);
+        var result = await _userManager.Users
+            .Where(u => u.Role == UserRoles.Doctor && u.Name!.Contains(name))
+            .ToListAsync();
+
+        var data = _mapper.Map<List<Doctor>>(result);
+        var dataToReturn = _mapper.Map<List<DoctorDetailsDto>>(data);
         
-        var dataToReturn = _mapper.Map<DoctorDetailsDto>(data);
-        
-        return data;
+        return dataToReturn;
     }
 
     public Task<Doctor> GetDoctorBySpeciality(string speciality)

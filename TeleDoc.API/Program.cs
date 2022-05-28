@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TeleDoc.API.Context;
 using TeleDoc.API.Data;
+using TeleDoc.API.Dtos.DoctorsDto;
 using TeleDoc.API.Services;
 using TeleDoc.API.Services.EmailServices;
 using TeleDoc.DAL.Entities;

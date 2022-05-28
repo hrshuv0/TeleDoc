@@ -43,7 +43,8 @@ public class AuthRepository<T> : IAuthRepository<T> where T : ApplicationUser, n
         {
             Name = model.Name,
             UserName = model.Email,
-            Email = model.Email
+            Email = model.Email,
+            Role = role
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);
