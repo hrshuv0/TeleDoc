@@ -1,3 +1,5 @@
+using TeleDoc.API.Area.Doctors.Models;
+
 namespace TeleDoc.API.Dtos.DoctorsDto;
 
 public class DoctorDetailsDto
@@ -12,4 +14,6 @@ public class DoctorDetailsDto
     public string? Speciality { get; set; }
     public string? College { get; set; }
     public string? CertificateUrl { get; set; }
+    
+    public IList<Schedule>? Schedules { get; set; }
 }

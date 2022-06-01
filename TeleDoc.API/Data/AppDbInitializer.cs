@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
+using TeleDoc.API.Models;
 using TeleDoc.API.Static;
-using TeleDoc.DAL.Entities;
 using TeleDoc.DAL.Extensions;
 
 namespace TeleDoc.API.Data;
@@ -39,15 +39,15 @@ public static class AppDbInitializer
             await userManager.AddToRoleAsync(newAdmin, UserRoles.Admin);
         }
         
-        const string doctortEmail = "doctor@email.com";
-        var doctortUser = await userManager.FindByEmailAsync(doctortEmail);
-        if (doctortUser is null)
+        const string doctorEmail = "doctor@email.com";
+        var doctorUser = await userManager.FindByEmailAsync(doctorEmail);
+        if (doctorUser is null)
         {
             var newDoctor = new ApplicationUser()
             {
                 Name = "Doctor User",
-                UserName = doctortEmail,
-                Email = doctortEmail,
+                UserName = doctorEmail,
+                Email = doctorEmail,
                 Gender = UserGender.Female,
                 EmailConfirmed = true,
                 Role = UserRoles.Doctor

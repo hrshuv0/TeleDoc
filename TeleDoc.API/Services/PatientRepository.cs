@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using TeleDoc.API.Area.Patients.Models;
 using TeleDoc.API.Context;
 using TeleDoc.API.Dtos.PatientsDto;
+using TeleDoc.API.Models;
 using TeleDoc.API.Static;
-using TeleDoc.DAL.Entities;
 
 namespace TeleDoc.API.Services;
 

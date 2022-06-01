@@ -1,11 +1,12 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TeleDoc.API.Area.Doctors.Models;
 using TeleDoc.API.Context;
 using TeleDoc.API.Dtos.DoctorsDto;
+using TeleDoc.API.Models;
 using TeleDoc.API.Static;
-using TeleDoc.DAL.Entities;
 
 namespace TeleDoc.API.Services;
 
@@ -43,6 +44,13 @@ public class DoctorRepository : IDoctorRepository
         var dataToReturn = _mapper.Map<DoctorDetailsDto>(data);
 
         return dataToReturn;
+    }
+
+    public async Task<ApplicationUser> GetDoctorById(string id)
+    {
+        var user = await _userManager.Users.Include(s => s.Schedules).FirstOrDefaultAsync(u => u.Id == id);
+        
+        return user!;
     }
 
     public async Task<List<DoctorDetailsDto>?> GetDoctorByName(string name)
@@ -85,5 +93,28 @@ public class DoctorRepository : IDoctorRepository
         await _dbContext.SaveChangesAsync();
 
         return doctor;
+    }
+
+    public async Task<DoctorDetailsDto> ApplyForCertified(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        
+        var data = _mapper.Map<Doctor>(user);
+        var userToReturn = _mapper.Map<DoctorDetailsDto>(data);
+
+        return userToReturn;
+    }
+
+    public async Task<DoctorDetailsDto> AddDoctorSchedule(string id, Schedule schedule)
+    {
+        var user = await GetDoctorById(id);
+        
+        user.Schedules!.Add(schedule);
+        await _dbContext.SaveChangesAsync();
+        
+        var data = _mapper.Map<Doctor>(user);
+        var userToReturn = _mapper.Map<DoctorDetailsDto>(data);
+
+        return userToReturn;
     }
 }

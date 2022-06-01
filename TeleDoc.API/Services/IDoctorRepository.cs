@@ -10,4 +10,6 @@ public interface IDoctorRepository
     Task<List<DoctorDetailsDto>?> GetDoctorByName(string name);
     Task<Doctor> GetDoctorBySpeciality(string speciality);
     Task<Doctor> UpdateDoctorByEmail(Doctor doctor);
+    public Task<DoctorDetailsDto> ApplyForCertified(string id);
+    public Task<DoctorDetailsDto> AddDoctorSchedule(string id, Schedule schedule);
 }

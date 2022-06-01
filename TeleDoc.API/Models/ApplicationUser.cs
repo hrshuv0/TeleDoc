@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using TeleDoc.API.Area.Doctors.Models;
 
-namespace TeleDoc.DAL.Entities;
+namespace TeleDoc.API.Models;
 
 public class ApplicationUser : IdentityUser
 {
@@ -16,6 +17,8 @@ public class ApplicationUser : IdentityUser
     public string? Speciality { get; set; }
     public string? College { get; set; }
     public string? CertificateUrl { get; set; }
+    
+    public IList<Schedule>? Schedules { get; set; }
     
     
 }

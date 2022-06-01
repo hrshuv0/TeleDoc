@@ -1,13 +1,14 @@
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeleDoc.API.Area.Doctors.Models;
 using TeleDoc.API.Dtos.DoctorsDto;
+using TeleDoc.API.Models;
 using TeleDoc.API.Models.Account;
 using TeleDoc.API.Services;
 using TeleDoc.API.Static;
-using TeleDoc.DAL.Entities;
 using TeleDoc.DAL.Enums;
 using TeleDoc.DAL.Exceptions;
 
@@ -108,6 +109,26 @@ public class DoctorsController : Controller
     }
 
 
+    [HttpGet("ApplyForCertified")]
+    public async Task<IActionResult> ApplyForCertified()
+    {
+        var uId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+        var user = await _doctorRepo.ApplyForCertified(uId);
+        
+        return Ok(user);
+    }
+
+    [HttpPost("addSchedule")]
+    public async Task<IActionResult> AddDoctorSchedule([FromBody] Schedule schedule)
+    {
+        var uId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        // if (id != uId) return Unauthorized();
+
+        var result = await _doctorRepo.AddDoctorSchedule(uId, schedule);
+        
+        return Ok(result);
+    }
 
 
 
