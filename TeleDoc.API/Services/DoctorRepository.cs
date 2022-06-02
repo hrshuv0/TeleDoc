@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TeleDoc.API.Area.Doctors.Models;
 using TeleDoc.API.Context;
@@ -28,8 +27,10 @@ public class DoctorRepository : IDoctorRepository
     public async Task<List<DoctorDetailsDto>?> GetDoctorListAsync()
     {
         var result = await _userManager.Users
+            .Include(d => d.Schedules)
             .Where(r => r.Role == UserRoles.Doctor)
             .ToListAsync();
+        
         var data = _mapper.Map<List<Doctor>>(result);
         var dataToReturn = _mapper.Map<List<DoctorDetailsDto>>(data);
 
@@ -38,7 +39,8 @@ public class DoctorRepository : IDoctorRepository
 
     public async Task<DoctorDetailsDto> GetDoctorByEmail(string email)
     {
-        var result = await _userManager.FindByEmailAsync(email);
+        var result = await _userManager.Users.Include(d => d.Schedules)
+            .FirstOrDefaultAsync(d => d.Email == email && d.Role == UserRoles.Doctor);
         
         var data = _mapper.Map<Doctor>(result);
         var dataToReturn = _mapper.Map<DoctorDetailsDto>(data);
@@ -46,9 +48,10 @@ public class DoctorRepository : IDoctorRepository
         return dataToReturn;
     }
 
-    public async Task<ApplicationUser> GetDoctorById(string id)
+    private async Task<ApplicationUser> GetDoctorById(string id)
     {
-        var user = await _userManager.Users.Include(s => s.Schedules).FirstOrDefaultAsync(u => u.Id == id);
+        var user = await _userManager.Users.Include(s => s.Schedules)
+            .FirstOrDefaultAsync(u => u.Id == id);
         
         return user!;
     }
@@ -58,6 +61,7 @@ public class DoctorRepository : IDoctorRepository
         // var result = await _userManager.FindByNameAsync(name);
         var result = await _userManager.Users
             .Where(u => u.Role == UserRoles.Doctor && u.Name!.Contains(name))
+            .Include(s => s.Schedules)
             .ToListAsync();
 
         var data = _mapper.Map<List<Doctor>>(result);
@@ -108,7 +112,7 @@ public class DoctorRepository : IDoctorRepository
     public async Task<DoctorDetailsDto> AddDoctorSchedule(string id, Schedule schedule)
     {
         var user = await GetDoctorById(id);
-        
+
         user.Schedules!.Add(schedule);
         await _dbContext.SaveChangesAsync();
         
@@ -116,5 +120,13 @@ public class DoctorRepository : IDoctorRepository
         var userToReturn = _mapper.Map<DoctorDetailsDto>(data);
 
         return userToReturn;
+    }
+
+    public List<Schedule> GetScheduleAsync(string docId)
+    {
+        var doctor = GetDoctorById(docId);
+        var schedules = doctor.Result.Schedules!.ToList();
+        
+        return  schedules;
     }
 }

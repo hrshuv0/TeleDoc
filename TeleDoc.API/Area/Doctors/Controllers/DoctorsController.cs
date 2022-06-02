@@ -125,6 +125,10 @@ public class DoctorsController : Controller
         var uId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         // if (id != uId) return Unauthorized();
 
+        var schedules = _doctorRepo.GetScheduleAsync(uId);
+        if (schedules.Count >= 5)
+            throw new FailedException("schedule for 7 days already added");
+
         var result = await _doctorRepo.AddDoctorSchedule(uId, schedule);
         
         return Ok(result);

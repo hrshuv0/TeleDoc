@@ -12,4 +12,5 @@ public interface IDoctorRepository
     Task<Doctor> UpdateDoctorByEmail(Doctor doctor);
     public Task<DoctorDetailsDto> ApplyForCertified(string id);
     public Task<DoctorDetailsDto> AddDoctorSchedule(string id, Schedule schedule);
+    public List<Schedule> GetScheduleAsync(string docId);
 }
