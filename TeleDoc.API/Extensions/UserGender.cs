@@ -1,4 +1,4 @@
-namespace TeleDoc.DAL.Extensions;
+namespace TeleDoc.API.Extensions;
 
 public class UserGender
 {

@@ -1,4 +1,4 @@
-namespace TeleDoc.DAL.Enums;
+namespace TeleDoc.API.Enums;
 
 public enum ResponseStatus
 {

@@ -12,6 +12,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
+    
+    
+
     public DbSet<ApplicationUser>? ApplicationUser { get; set; }
     public DbSet<Patient>? Patient { get; set; }
     public DbSet<Doctor>? Doctor { get; set; }

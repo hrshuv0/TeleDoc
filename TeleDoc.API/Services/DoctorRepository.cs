@@ -134,7 +134,7 @@ public class DoctorRepository : IDoctorRepository
         }
         
 
-        user.Schedules!.Add(schedule);
+        user.Schedules?.Add(schedule);
         await _dbContext.SaveChangesAsync();
         
         var data = _mapper.Map<Doctor>(user);

@@ -1,6 +1,6 @@
-using TeleDoc.DAL.Enums;
+using TeleDoc.API.Enums;
 
-namespace TeleDoc.DAL.Extensions;
+namespace TeleDoc.API.Extensions;
 
 public class LoginResponse
 {

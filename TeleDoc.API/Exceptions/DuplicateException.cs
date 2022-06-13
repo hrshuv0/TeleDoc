@@ -1,4 +1,4 @@
-namespace TeleDoc.DAL.Exceptions;
+namespace TeleDoc.API.Exceptions;
 
 public class DuplicateException : Exception
 {

@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeleDoc.API.Area.Patients.Models;
 using TeleDoc.API.Dtos.PatientsDto;
+using TeleDoc.API.Enums;
+using TeleDoc.API.Exceptions;
 using TeleDoc.API.Models;
 using TeleDoc.API.Models.Account;
 using TeleDoc.API.Services;
 using TeleDoc.API.Static;
-using TeleDoc.DAL.Enums;
-using TeleDoc.DAL.Exceptions;
 
 namespace TeleDoc.API.Area.Patients.Controllers;
 
