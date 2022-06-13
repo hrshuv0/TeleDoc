@@ -6,6 +6,7 @@ using TeleDoc.API.Context;
 using TeleDoc.API.Dtos.DoctorsDto;
 using TeleDoc.API.Models;
 using TeleDoc.API.Static;
+using DayOfWeek = TeleDoc.API.Area.Admins.Enums.DayOfWeek;
 
 namespace TeleDoc.API.Services;
 
@@ -27,9 +28,12 @@ public class DoctorRepository : IDoctorRepository
     public async Task<List<DoctorDetailsDto>?> GetDoctorListAsync()
     {
         var result = await _userManager.Users
-            .Include(d => d.Schedules)
+            .Include(d => d.Schedules)!.
+            ThenInclude(p => p.Patients)
             .Where(r => r.Role == UserRoles.Doctor)
             .ToListAsync();
+
+        // var role = _roleManager.Roles.Where(r => r.Name == UserRoles.Doctor);
         
         var data = _mapper.Map<List<Doctor>>(result);
         var dataToReturn = _mapper.Map<List<DoctorDetailsDto>>(data);
@@ -39,7 +43,9 @@ public class DoctorRepository : IDoctorRepository
 
     public async Task<DoctorDetailsDto> GetDoctorByEmail(string email)
     {
-        var result = await _userManager.Users.Include(d => d.Schedules)
+        var result = await _userManager.Users
+            .Include(d => d.Schedules)!
+            .ThenInclude(p => p.Patients)
             .FirstOrDefaultAsync(d => d.Email == email && d.Role == UserRoles.Doctor);
         
         var data = _mapper.Map<Doctor>(result);
@@ -50,7 +56,9 @@ public class DoctorRepository : IDoctorRepository
 
     private async Task<ApplicationUser> GetDoctorById(string id)
     {
-        var user = await _userManager.Users.Include(s => s.Schedules)
+        var user = await _userManager.Users
+            .Include(s => s.Schedules)!
+            .ThenInclude(p => p.Patients)
             .FirstOrDefaultAsync(u => u.Id == id);
         
         return user!;
@@ -61,7 +69,8 @@ public class DoctorRepository : IDoctorRepository
         // var result = await _userManager.FindByNameAsync(name);
         var result = await _userManager.Users
             .Where(u => u.Role == UserRoles.Doctor && u.Name!.Contains(name))
-            .Include(s => s.Schedules)
+            .Include(s => s.Schedules)!
+            .ThenInclude(p => p.Patients)
             .ToListAsync();
 
         var data = _mapper.Map<List<Doctor>>(result);
@@ -112,6 +121,18 @@ public class DoctorRepository : IDoctorRepository
     public async Task<DoctorDetailsDto> AddDoctorSchedule(string id, Schedule schedule)
     {
         var user = await GetDoctorById(id);
+        
+        var existsSchedule =  user.Schedules!
+            .FirstOrDefault(d => d.DayOfWeek == schedule.DayOfWeek);
+
+        if (existsSchedule is not null)
+        {
+            var dataT = _mapper.Map<Doctor>(user);
+            var userToReturnT = _mapper.Map<DoctorDetailsDto>(dataT);
+
+            return userToReturnT;
+        }
+        
 
         user.Schedules!.Add(schedule);
         await _dbContext.SaveChangesAsync();
@@ -122,11 +143,38 @@ public class DoctorRepository : IDoctorRepository
         return userToReturn;
     }
 
-    public List<Schedule> GetScheduleAsync(string docId)
+    public async Task<List<Schedule>> GetScheduleAsync(string email)
     {
-        var doctor = GetDoctorById(docId);
-        var schedules = doctor.Result.Schedules!.ToList();
+        var doctor = await _userManager.Users
+            .Include(s => s.Schedules)!
+            .ThenInclude(p => p.Patients)
+            .FirstOrDefaultAsync(u => u.Email == email);
+
+        var schedules = doctor!.Schedules!.ToList();
         
         return  schedules;
+    }
+
+    public async Task<Schedule> AddBooking(string pEmail, string email, int dayOfWeek)
+    // public async Task<Schedule> AddBooking(string pEmail, int sId)
+    {
+        var doctor = await GetDoctorByEmail(email);
+        var schedule =  doctor.Schedules!
+            .FirstOrDefault(d => d.DayOfWeek == (DayOfWeek)dayOfWeek);
+
+        var patientEmail = new BookingSchedule()
+        {
+            PatientEmail = pEmail
+        };
+        
+        if (schedule is null) return schedule!;
+        
+        schedule.Patients?.Add(patientEmail);
+        await _dbContext.SaveChangesAsync();
+
+        // var schedule = await _dbContext.Schedules!.FirstOrDefaultAsync(s => s.ScheduleId == sId);
+        // schedule!.Patients?.Add(patientEmail);
+
+        return schedule;
     }
 }

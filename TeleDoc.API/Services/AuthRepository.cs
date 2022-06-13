@@ -105,7 +105,7 @@ public class AuthRepository<T> : IAuthRepository<T> where T : ApplicationUser, n
                 response.Token = tokenHandler.WriteToken(token);
                 response.Data = user;
 
-                await _emailSender.SendEmailAsync(user.Email, "new login", "<p>new login detected</p>");
+                // await _emailSender.SendEmailAsync(user.Email, "new login", "<p>new login detected</p>");
             }
             else
             {

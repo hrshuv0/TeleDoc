@@ -16,6 +16,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Patient>? Patient { get; set; }
     public DbSet<Doctor>? Doctor { get; set; }
     public DbSet<Schedule>? Schedules { get; set; }
+    public DbSet<BookingSchedule>? Booking { get; set; }
     
     
 }
