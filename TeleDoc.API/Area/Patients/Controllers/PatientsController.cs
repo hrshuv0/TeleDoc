@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -118,6 +119,16 @@ public class PatientsController : Controller
         }
 
         return Ok();
+    }
+
+    [HttpGet("appoinment")]
+    public async Task<IActionResult> Appoinment()
+    {
+        var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+        var schedule = await _patientRepo.GetAppoinment(email);
+
+        return Ok(schedule);
     }
 
 
