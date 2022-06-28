@@ -38,7 +38,6 @@ public class AdminController : ControllerBase
         return Ok(ambulance);
     }
     
-    [AllowAnonymous]
     [HttpPost("hospital")]
     public async Task<IActionResult> AddHospital([FromBody] Hospital hospital)
     {
@@ -57,6 +56,27 @@ public class AdminController : ControllerBase
         var hospitals = _dbContext.Hospitals.Include(h => h.Location).ToList();
 
         return Ok(hospitals);
+    }
+    
+    
+    [HttpPost("primary")]
+    public async Task<IActionResult> AddEmergency([FromBody] Emergency primary)
+    {
+        if (!ModelState.IsValid) return BadRequest(primary);
+        
+        _dbContext.Primary!.Add(primary);
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(primary);
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("primary")]
+    public async Task<IActionResult> GetEmergency()
+    {
+        var primary = _dbContext.Primary.ToList();
+
+        return Ok(primary);
     }
     
 

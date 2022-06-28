@@ -24,6 +24,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<MapLocation>? MapLocations { get; set; }
     public DbSet<Ambulance>? Ambulances { get; set; }
     public DbSet<Hospital>? Hospitals { get; set; }
+    public DbSet<Emergency> Primary { get; set; }
     
     
 }
