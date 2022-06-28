@@ -23,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<BookingSchedule>? Booking { get; set; }
     public DbSet<MapLocation>? MapLocations { get; set; }
     public DbSet<Ambulance>? Ambulances { get; set; }
+    public DbSet<Hospital>? Hospitals { get; set; }
     
     
 }
