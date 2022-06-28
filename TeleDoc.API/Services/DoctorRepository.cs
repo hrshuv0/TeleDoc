@@ -188,4 +188,9 @@ public class DoctorRepository : IDoctorRepository
 
         return schedule;
     }
+
+    public async void Save()
+    {
+        await _dbContext.SaveChangesAsync();
+    }
 }

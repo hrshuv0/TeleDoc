@@ -14,4 +14,5 @@ public interface IDoctorRepository
     Task<DoctorDetailsDto> AddDoctorSchedule(string id, Schedule schedule);
     Task<List<Schedule>> GetScheduleAsync(string docId);
     Task<Schedule> AddBooking(string pEmail, string email, int dayOfWeek);
+    void Save();
 }
