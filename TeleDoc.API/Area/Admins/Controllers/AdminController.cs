@@ -38,6 +38,15 @@ public class AdminController : ControllerBase
         return Ok(ambulance);
     }
     
+    [AllowAnonymous]
+    [HttpGet("ambulance")]
+    public async Task<IActionResult> GetAmbulance()
+    {
+        var ambulance = _dbContext.Ambulances.ToList();
+
+        return Ok(ambulance);
+    }
+    
     [HttpPost("hospital")]
     public async Task<IActionResult> AddHospital([FromBody] Hospital hospital)
     {

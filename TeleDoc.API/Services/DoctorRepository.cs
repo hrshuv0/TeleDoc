@@ -98,9 +98,24 @@ public class DoctorRepository : IDoctorRepository
             doc.Gender = doctor.Gender;
             doc.DateOfBirth = doctor.DateOfBirth;
             doc.Address = doctor.Address;
+            doc.PhoneNumber = doctor.PhoneNumber;
+            doc.CertificateUrl = doctor.CertificateUrl;
             // doc.MapLocation = doctor.MapLocation;
-            doc.MapLocation!.Latitude = doctor.MapLocation!.Latitude;
-            doc.MapLocation.Longitude = doctor.MapLocation.Longitude;
+
+            if (doc.MapLocation is null)
+            {
+                var location = new MapLocation()
+                {
+                    Latitude = doctor.MapLocation.Latitude,
+                    Longitude = doctor.MapLocation.Longitude
+                };
+                doc.MapLocation = location;
+            }
+            else
+            {
+                doc.MapLocation!.Latitude = doctor.MapLocation!.Latitude;
+                doc.MapLocation.Longitude = doctor.MapLocation.Longitude;
+            }
             
             doc.College = doctor.College;
             doc.Speciality = doctor.Speciality;
@@ -108,12 +123,10 @@ public class DoctorRepository : IDoctorRepository
 
             // doc = doctor;
         }
-
-        
         
         await _dbContext.SaveChangesAsync();
 
-        var data = _mapper.Map<Doctor>(doctor);
+        var data = _mapper.Map<Doctor>(doc);
         var dataToReturn = _mapper.Map<DoctorDetailsDto>(data);
         
         return dataToReturn;
