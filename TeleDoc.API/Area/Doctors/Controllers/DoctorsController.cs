@@ -175,7 +175,8 @@ public class DoctorsController : Controller
                 file.CopyTo(fileStreams);
             }
 
-            doctor.CertificateUrl = @"/images/" + fileName + extension;
+            var url = @"/images/" + fileName + extension;
+            await _doctorRepo.UpdateImageUrl(dId, url);
             _doctorRepo.Save();
 
             return Ok("image updated");
