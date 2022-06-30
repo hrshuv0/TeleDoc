@@ -9,7 +9,7 @@ public interface IPatientRepository
     Task<List<PatientDetailsDto>?> GetPatientListAsync();
     Task<PatientDetailsDto> GetPatientByEmail(string email);
     Task<Patient> UpdatePatientByEmail(Patient patient);
-    Task<Schedule?> GetAppoinment(string email);
+    Task<List<Schedule>?> GetAppoinment(string email);
     Task UpdateImageUrl(string uId, string url);
 
     Task Save();

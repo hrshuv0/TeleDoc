@@ -107,8 +107,20 @@ public class DoctorRepository : IDoctorRepository
 
             if (doctor.MapLocation is not null)
             {
-                doc.MapLocation.Latitude = doctor.MapLocation.Latitude;
-                doc.MapLocation.Longitude = doctor.MapLocation.Longitude;
+                if (doc.MapLocation is null)
+                {
+                    doc.MapLocation = new MapLocation()
+                    {
+                        Latitude = doctor.MapLocation.Latitude,
+                        Longitude = doctor.MapLocation.Longitude
+                    };
+                }
+                else
+                {
+                    doc.MapLocation.Latitude = doctor.MapLocation.Latitude;
+                    doc.MapLocation.Longitude = doctor.MapLocation.Longitude;
+                }
+                
             }
             
             doc.College = doctor.College;

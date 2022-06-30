@@ -70,12 +70,24 @@ public class PatientRepository : IPatientRepository
         return patient;
     }
 
-    public async Task<Schedule?> GetAppoinment(string email)
+    public async Task<List<Schedule>?> GetAppoinment(string email)
     {
-        var booking = await _dbContext.Booking!.FirstOrDefaultAsync(s => s.PatientEmail == email);
-        var schedule = await _dbContext.Schedules!.FirstOrDefaultAsync(b => b.ScheduleId == booking!.Id);
+        // var booking = await _dbContext.Booking!.FirstOrDefaultAsync(s => s.PatientEmail == email);
+        // var schedule = await _dbContext.Schedules!.FirstOrDefaultAsync(b => b.ScheduleId == booking!.Id);
 
-        return schedule;
+        var booking = _dbContext.Booking!
+            .Include(s => s.Schedules)
+            .Where(x => x.PatientEmail == email)
+            .ToList();
+
+        var schedule = _dbContext.Schedules.ToList();
+
+        var result = (from s in schedule
+            join b in booking 
+                on s.ScheduleId equals b.Schedules.ScheduleId
+            select s).ToList();
+        
+        return result;
     }
 
     public async Task UpdateImageUrl(string uId, string? url)
